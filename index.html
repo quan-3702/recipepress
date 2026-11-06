@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RecipePress – Family Cookbook &amp; Recipe Card Maker</title>
+  <meta name="description" content="Keep your family recipes in one place and print beautiful recipe cards or a whole cookbook. Works offline, nothing is uploaded, no subscription.">
+  <meta name="theme-color" content="#c2410c">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="icon-192.png" alt="" width="30" height="30"><span>RecipePress</span></div>
+    <span class="spacer"></span>
+    <div class="top-btns">
+      <button id="newBtn" class="tb" title="New recipe (Ctrl+N)">＋ New recipe</button>
+      <button id="pasteBtn" class="tb" title="Paste a recipe you copied">📋 Paste a recipe</button>
+      <button id="printBtn" class="tb" disabled title="Print this recipe (Ctrl+P)">🖨 Print</button>
+      <button id="bookBtn" class="tb" disabled>📖 Print cookbook</button>
+      <button id="moreBtn" class="tb">☰ More</button>
+      <button id="proBtn" class="pro-btn" hidden>★ Get Pro</button>
+    </div>
+    <div id="menu" class="menu" hidden>
+      <button id="printAllBtn">🖨 Print all recipes in the list</button>
+      <button id="txtBtn">📝 Save this recipe as text</button>
+      <hr>
+      <button id="backupBtn">💾 Back up all recipes (file)</button>
+      <button id="restoreBtn2">📂 Restore from a backup…</button>
+      <button id="exampleBtn">✨ Add example recipes</button>
+      <hr>
+      <a href="help.html" target="_blank" rel="noopener">❓ How to use RecipePress</a>
+      <a href="mailto:thequan03072002@gmail.com?subject=RecipePress%20feedback">✉ Feedback &amp; support</a>
+      <a href="https://apps.microsoft.com/detail/9MWSF3JMP1GJ" target="_blank" rel="noopener">More apps: PrintCal photo calendar maker</a>
+      <a href="https://apps.microsoft.com/detail/9PJSZZRXMDWN" target="_blank" rel="noopener">More apps: ColorPress coloring page maker</a>
+    </div>
+    <input id="restoreIn" type="file" accept=".json,application/json" hidden>
+    <input id="photoIn" type="file" accept="image/*" hidden>
+  </header>
+
+  <main class="layout">
+    <aside class="left">
+      <div class="search-row">
+        <input id="search" type="search" placeholder="🔍 Search recipes or ingredients (Ctrl+F)">
+        <select id="catFilter" aria-label="Category"></select>
+      </div>
+      <p id="count" class="hint"></p>
+      <div id="list" class="list"></div>
+      <p class="promise">🔒 Your recipes stay on this PC – nothing is uploaded.<br>💳 Pay once for Pro – no subscription.</p>
+      <p class="fb-note">💬 Something not working the way you want? Tell me – <a href="mailto:thequan03072002@gmail.com?subject=RecipePress%20feedback">thequan03072002@gmail.com</a>. I read every message and improve the app.</p>
+    </aside>
+
+    <section class="stage">
+      <div class="stagebar">
+        <div class="tabs"><button id="tabEdit" class="on">✏️ Edit</button><button id="tabPreview">👁 Print preview</button></div>
+        <div class="scale"><span class="muted">Servings</span>
+          <div class="seg" id="scaleSeg"><button data-v="0.5">½×</button><button data-v="1" class="on">1×</button><button data-v="2">2×</button><button data-v="3">3×</button></div>
+        </div>
+      </div>
+      <div class="view">
+        <div id="emptyMain" class="empty">
+          <h1>Your family cookbook</h1>
+          <p>Write down the recipes you love, add a photo, and print them as recipe cards or a whole cookbook.</p>
+          <div class="row-btns center">
+            <button id="newBig" class="primary big">＋ New recipe</button>
+            <button id="pasteBig" class="ghost big">📋 Paste a recipe</button>
+            <button id="exampleBig" class="ghost big">✨ Try the examples</button>
+          </div>
+          <ul class="promise-list">
+            <li>📋 Copy a recipe from anywhere and paste it – it is split into ingredients and steps</li>
+            <li>➗ Make half, double or triple – the amounts change for you</li>
+            <li>🖨 Print full pages or 4 × 6 / 5 × 7 recipe cards</li>
+            <li>📖 A cookbook with cover, contents and page numbers in Pro</li>
+          </ul>
+        </div>
+
+        <form id="form" class="form" hidden onsubmit="return false">
+          <div class="form-top">
+            <div class="form-main">
+              <label class="field">Recipe name<input id="f_title" type="text" maxlength="120" placeholder="e.g. Grandma's apple pie"></label>
+              <div class="three">
+                <label class="field">Category<span class="cat-row"><select id="f_cat"></select><button id="newCat" type="button" class="mini" title="New category">＋</button></span></label>
+                <label class="field">Serves<input id="f_serves" type="text" maxlength="40" placeholder="4"></label>
+                <label class="field">Prep time<input id="f_prep" type="text" maxlength="40" placeholder="15 min"></label>
+                <label class="field">Cook time<input id="f_cook" type="text" maxlength="40" placeholder="1 h"></label>
+              </div>
+            </div>
+            <div class="photo-col">
+              <button id="photoBox" type="button" class="photo-box" title="Add or change the photo"></button>
+              <button id="photoDel" type="button" class="link" hidden>Remove photo</button>
+            </div>
+          </div>
+          <div class="two-col">
+            <label class="field">Ingredients <span class="muted">(one per line – start with the amount, e.g. “1 1/2 cups flour”)</span><textarea id="f_ingredients" rows="12" placeholder="2 cups flour&#10;1 tsp salt&#10;3 eggs&#10;For the sauce:&#10;1 cup milk"></textarea></label>
+            <label class="field">Directions <span class="muted">(one step per line)</span><textarea id="f_steps" rows="12" placeholder="Heat the oven to 350 °F.&#10;Mix the flour and salt…"></textarea></label>
+          </div>
+          <label class="field">Notes <span class="muted">(optional)</span><textarea id="f_notes" rows="3" placeholder="Tips, where the recipe came from, a memory…"></textarea></label>
+          <label class="field">From the kitchen of <span class="muted">(optional)</span><input id="f_source" type="text" maxlength="80" placeholder="e.g. Grandma Rose"></label>
+          <div class="row-btns">
+            <button id="dupBtn" type="button" class="ghost">⧉ Make a copy</button>
+            <button id="delBtn" type="button" class="ghost danger">🗑 Delete recipe</button>
+          </div>
+          <p class="hint">Everything is saved automatically on this PC.</p>
+        </form>
+
+        <div id="previewWrap" class="preview-wrap" hidden>
+          <div id="preview" class="preview"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="right">
+      <section class="tool">
+        <h2>🖨 Print as</h2>
+        <label class="field">Layout<select id="layout"></select></label>
+        <label class="field">Design<select id="theme"></select></label>
+        <label class="check"><input id="b_photos" type="checkbox"> Print the photos</label>
+        <p id="setHint" class="hint warn"></p>
+      </section>
+      <section class="tool">
+        <h2>📖 Cookbook <span class="badge pro-only">PRO</span></h2>
+        <label class="field">Title<input id="b_title" type="text" maxlength="80"></label>
+        <label class="field">Subtitle <span class="muted">(optional)</span><input id="b_subtitle" type="text" maxlength="80" placeholder="Recipes from three generations"></label>
+        <label class="field">By <span class="muted">(optional)</span><input id="b_by" type="text" maxlength="80" placeholder="The Nguyen family"></label>
+        <label class="field">Dedication <span class="muted">(optional, own page)</span><textarea id="b_dedication" rows="3" placeholder="For Mom, who taught us all to cook."></textarea></label>
+        <label class="check"><input id="b_cover" type="checkbox"> Cover page</label>
+        <label class="check"><input id="b_toc" type="checkbox"> Contents with page numbers</label>
+        <label class="check"><input id="b_chapters" type="checkbox"> A chapter page for every category</label>
+        <label class="check"><input id="b_nums" type="checkbox"> Page numbers</label>
+        <p class="hint">Click <b>📖 Print cookbook</b>. In the print window choose your printer – or “Save as PDF” / “Microsoft Print to PDF” for a PDF.</p>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="pasteDlg" class="dlg wide-dlg">
+    <h2>Paste a recipe</h2>
+    <p class="muted">Copy a recipe from a website, an email or a note and paste it here. RecipePress finds the name, ingredients and steps – you can fix anything afterwards.</p>
+    <textarea id="pasteText" rows="14" placeholder="Banana Bread&#10;Serves: 8&#10;&#10;Ingredients&#10;3 ripe bananas&#10;1/3 cup melted butter&#10;…&#10;&#10;Directions&#10;Heat the oven to 350 °F.&#10;…"></textarea>
+    <div class="row-btns">
+      <button id="pasteGo" class="primary">Add recipe</button>
+      <button id="pasteCancel" class="ghost">Cancel</button>
+    </div>
+  </dialog>
+
+  <dialog id="proDialog" class="dlg">
+    <h2>RecipePress Pro</h2>
+    <p class="muted">One-time purchase. Yours forever on this Microsoft account. No subscription, ever.</p>
+    <ul class="pro-list">
+      <li><strong>Unlimited recipes</strong> – the free version keeps 12</li>
+      <li><strong>The whole cookbook</strong> – cover page, dedication, contents, chapters and page numbers</li>
+      <li><strong>Print many recipes at once</strong> – all cards or pages in one go</li>
+      <li><strong>Cookbook sizes</strong> 5.5 × 8.5 and 8 × 10 in</li>
+      <li><strong>4 more designs</strong> – Farmhouse, Christmas, Tết / Lunar New Year, Garden</li>
+    </ul>
+    <p class="fb-note">💬 Something not working the way you want? Tell me – <a href="mailto:thequan03072002@gmail.com?subject=RecipePress%20feedback">thequan03072002@gmail.com</a>. I read every message and improve the app.</p>
+    <p id="proMsg" class="pro-msg" hidden></p>
+    <div class="row-btns">
+      <button id="buyBtn" class="primary" autofocus>Unlock Pro</button>
+      <button id="restoreBtn" class="ghost">Restore purchase</button>
+      <button id="closePro" class="ghost">Not now</button>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" hidden></div>
+  <div id="restartBar" class="restart" hidden>A new version of RecipePress is ready. <button id="restartBtn" class="primary">Restart now</button></div>
+  <div id="measure" aria-hidden="true"></div>
+  <div id="printArea"></div>
+  <script src="app.js"></script>
+</body>
+</html>

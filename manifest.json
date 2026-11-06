@@ -1,0 +1,16 @@
+{
+  "name": "RecipePress - Family Cookbook & Recipe Card Maker",
+  "short_name": "RecipePress",
+  "description": "Keep your family recipes in one place and print recipe cards or a whole cookbook – works offline, nothing is uploaded.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#c2410c",
+  "theme_color": "#c2410c",
+  "categories": ["food", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
